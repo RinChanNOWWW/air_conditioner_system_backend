@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.utils import timezone
 import air_conditioner_system.settings as st
 
+
 class RoomCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomCheck
@@ -50,6 +51,7 @@ class RoomStatusUpdateSerializer(serializers.Serializer):
         instance.temperature = validated_data.get('temperature', instance.temperature)
         # instance.electricity_now = validated_data.get('electricity_now', instance.electricity_now)
         instance.target_temp = validated_data.get('target_temp', instance.target_temp)
+        old_ac_status = instance.ac_status
         instance.ac_status = validated_data.get('ac_status', instance.ac_status)
         # instance.online_time += timezone.now() - instance.last_change_time
         if instance.temperature == instance.target_temp:
@@ -58,5 +60,19 @@ class RoomStatusUpdateSerializer(serializers.Serializer):
             instance.online_time = timedelta(0)
         instance.last_change_time = now
         instance.save()
+        update_log(instance, old_ac_status=old_ac_status)
         print("Update Room", instance.room_id)
         return instance
+
+def update_log(room_status, old_ac_status):
+    if room_status.ac_status != old_ac_status:
+        log = {
+            'room_id': room_status.room_id,
+            'check_in_time': room_status.check_in_time,
+            'timestamp': timezone.now(),
+            'temperature': room_status.temperature,
+            'ac_status': room_status.ac_status,
+            'electricity_now': room_status.electricity_now
+        }
+        RoomLog.objects.create(**log)
+        print("Update Log:", log)

@@ -13,6 +13,7 @@ from .serializers import RoomLogSerializer, RoomCheckSerializer, RoomStatusSeria
 from .mixins import RoomStatusMixin, RoomCheckMixin
 import air_conditioner_system.settings as st
 from backend.scheduler import scheduler
+from backend.taskqueue import taskQueue
 
 class RoomStatusView(APIView):
 
@@ -46,25 +47,37 @@ class RoomStatusView(APIView):
         # print('OK2')
         if (serializer.is_valid()):
             if room_status.check_in_time != None:
-                if scheduler(int(room_id), request_ac_status):
+                if room_status.ac_status != 'Off' or scheduler(int(room_id), request_ac_status):
+                    taskQueue.remove(room_id)
                     room_status = serializer.save()
-                    if room_status.ac_status != ac_status_old:
-                        log = {
-                            'room_id': room_status.room_id,
-                            'check_in_time': room_status.check_in_time,
-                            'timestamp': timezone.now(),
-                            'temperature': room_status.temperature,
-                            'ac_status': room_status.ac_status,
-                            'electricity_now': room_status.electricity_now
-                        }
-                        RoomLog.objects.create(**log)
                     serializer = RoomStatusSerializer(instance=room_status)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
                 else:
+                    taskQueue.push(serializer)
                     room_status.ac_status = ac_status_old
                     room_status.save()
                     serializer = RoomStatusSerializer(instance=room_status)
                     return Response(data=serializer.data, status=status.HTTP_200_OK)
+                # if scheduler(int(room_id), request_ac_status):
+                #     room_status = serializer.save()
+                #     # if room_status.ac_status != ac_status_old:
+                #     #     log = {
+                #     #         'room_id': room_status.room_id,
+                #     #         'check_in_time': room_status.check_in_time,
+                #     #         'timestamp': timezone.now(),
+                #     #         'temperature': room_status.temperature,
+                #     #         'ac_status': room_status.ac_status,
+                #     #         'electricity_now': room_status.electricity_now
+                #     #     }
+                #     #     RoomLog.objects.create(**log)
+                #     serializer = RoomStatusSerializer(instance=room_status)
+                #     return Response(data=serializer.data, status=status.HTTP_200_OK)
+                # else:
+                #     taskQueue.push(serializer)
+                #     room_status.ac_status = ac_status_old
+                #     room_status.save()
+                #     serializer = RoomStatusSerializer(instance=room_status)
+                #     return Response(data=serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(data={'error': 'This room is not checked in'}, status=status.HTTP_400_BAD_REQUEST)
         else:

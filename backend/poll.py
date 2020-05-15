@@ -3,6 +3,8 @@ from django.db.models import Q
 from datetime import datetime, timezone, timedelta
 import air_conditioner_system.settings as settings
 from django.utils import timezone
+from backend.taskqueue import taskQueue
+from backend.scheduler import scheduler
 
 def poll():
     room_list = RoomStatus.objects.filter(~Q(ac_status='Off'))
@@ -20,3 +22,40 @@ def poll():
 
             room.last_change_time = now
         room.save()
+
+def poll2():
+    print("Polling....")
+    room_list = RoomStatus.objects.filter(~Q(ac_status='Off'))
+    for room in room_list:
+        now = timezone.now()
+        print("Room:", room.room_id, "Temp:", room.temperature, "Elec:", room.electricity_now)
+        interval = now - room.last_change_time
+        room.online_time += timedelta(seconds=1)
+        if interval.seconds >= 60:
+            room.electricity_now += (interval.seconds // 60) * settings.ELEC[str(room.ac_status)]
+            room_check = RoomCheck.objects.get(room_id=room.room_id, check_in_time=room.check_in_time)
+            room_check.electricity_now = room.electricity_now
+            room_check.save()
+            room.last_change_time = now
+        room.save()
+
+    # while taskQueue.length() > 0:
+    #     data = taskQueue.front()
+    #     if scheduler(data.initial_data["room_id"], data.initial_data["ac_status"]) == True:
+    #         taskQueue.pop()
+    #         if data.is_valid():
+    #             data.save()
+    #     else:
+    #         break
+    if taskQueue.length() > 0:
+        data = taskQueue.front()
+        if scheduler(data.initial_data["room_id"], data.initial_data["ac_status"]) == True:
+            taskQueue.pop()
+            if data.is_valid():
+                data.save()
+
+    print("REQUEST waiting in QUEUE:")
+    print(taskQueue)
+
+
+    
