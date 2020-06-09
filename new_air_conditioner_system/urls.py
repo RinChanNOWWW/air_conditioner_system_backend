@@ -31,11 +31,13 @@ user_apis = [
 ]
 
 front_apis = [
+    path('detail/', views.Detail.as_view(), name='detail'),
     path('checkout/', views.CheckOut.as_view(), name='checkout')
 ]
 
 manager_apis = [
-    path('report/', views.Report.as_view(), name='report')
+    path('dailyreport/', views.DailyReport.as_view(), name='dailyreport'),
+    path('otherreport/', views.OtherReport.as_view(), name='otherreport')
 ]
 
 apis = [

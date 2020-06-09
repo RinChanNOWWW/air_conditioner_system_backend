@@ -6,7 +6,7 @@ from .service_list import serviceList
 from .pause_list import pauseList
 from .models import CommonLog
 from .controller import interval
-from datetime import date
+from datetime import date, datetime
 
 
 class RoomInfo:
@@ -26,6 +26,7 @@ class RoomInfo:
         self.online_time = online_time
         self.checked = False
         self.total_money = money
+        self.checkin_time = None
 
     def same_mode(self, mode):
         return self.ac_status == mode
@@ -33,10 +34,24 @@ class RoomInfo:
     def set(self, **settings):
         self.mutex.acquire()
         if 'ac_status' in settings:
+            if settings['ac_status'] != self.ac_status:
+                obj, _ = CommonLog.objects.get_or_create(
+                    room_id=self.room_id,
+                    date=date.today()
+                )
+                obj.change_wind_times += 1
+                obj.save()
             self.ac_status = settings['ac_status']
         if 'temp' in settings:
             self.temp = settings['temp']
         if 'target_temp' in settings:
+            if settings['target_temp'] != self.target_temp:
+                obj, _ = CommonLog.objects.get_or_create(
+                    room_id=self.room_id,
+                    date=date.today()
+                )
+                obj.change_temp_times += 1
+                obj.save()
             self.target_temp = settings['target_temp']
         if 'money' in settings:
             self.total_money = settings['money']
@@ -49,6 +64,7 @@ class RoomInfo:
     def check_in(self):
         self.mutex.acquire()
         self.checked = True
+        self.checkin_time = datetime.now()
         self.mutex.release()
 
     def check_out(self):
@@ -68,6 +84,7 @@ class RoomInfo:
         self.checked = False
         self.details = []
         self.total_money = 0
+        self.checkin_time = None
         self.mutex.release()
 
     def is_checked(self):

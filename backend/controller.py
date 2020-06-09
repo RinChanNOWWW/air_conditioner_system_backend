@@ -2,7 +2,7 @@ from .service_list import serviceList
 from .waiting_queue import waitingQueue
 from .scheduler import schedule
 from .pause_list import pauseList
-from .models import TargetTempLog, WindLog
+from .models import TargetTempLog, WindLog, CommonLog
 from datetime import date
 from .room_list import roomList
 
@@ -24,6 +24,7 @@ def poll():
         )
         room.update_elec()
         room.update_money()
+        update_online_time(room)
         update_wind_log(room)
 
     for item in pauseList.pause_list:
@@ -38,6 +39,15 @@ def poll():
             waitingQueue.push(new_request)
 
     schedule()
+
+
+def update_online_time(room):
+    obj, _ = CommonLog.objects.get_or_create(
+        room_id=room.room_id,
+        date=date.today()
+    )
+    obj.online_time += interval
+    obj.save()
 
 
 def update_target_temp_log(room):

@@ -10,6 +10,9 @@ class CommonLog(models.Model):
     reach_target_times = models.IntegerField(default=0)
     scheduled_times = models.IntegerField(default=0)
     ac_use_times = models.IntegerField(default=0)
+    change_temp_times = models.IntegerField(default=0)
+    change_wind_times = models.IntegerField(default=0)
+    online_time = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ("room_id", "date")
@@ -24,6 +27,7 @@ class TargetTempLog(models.Model):
     class Meta:
         unique_together = ("room_id", "date", "target_temp")
 
+
 class WindLog(models.Model):
     room_id = models.IntegerField()
     date = models.DateField()
@@ -32,4 +36,3 @@ class WindLog(models.Model):
 
     class Meta:
         unique_together = ("room_id", "date", "wind")
-

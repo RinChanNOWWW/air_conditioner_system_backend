@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.response import Response
+from django.db.models import Sum
 from .ac_settings import acSettings
 from .room_info import RoomInfo
 from .room_list import roomList
@@ -11,7 +12,7 @@ from .serializers import *
 from .scheduler import schedule
 from .pause_list import pauseList
 from .models import CommonLog, WindLog, TargetTempLog
-from datetime import date
+from datetime import date, datetime
 import pandas as pd
 
 
@@ -100,7 +101,7 @@ class SetMode(APIView):
         else:
             return Response({'Error': 'Data can not be serialized.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         room = roomList.get_room(content['room_id'])
-        room.target_temp = content['target_temp']
+        room.set(target_temp=content['target_temp'])
         if room.same_mode(content['ac_status']):
             serializer = RoomInfoSerializer(room)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -115,13 +116,6 @@ class SetMode(APIView):
                 pauseList.remove(room.room_id)
             if content['ac_status'] == 'off':
                 room.add_detail()
-                # windobj, _ = WindLog.objects.get_or_create(
-                #     room_id=room.room_id,
-                #     date=date.today(),
-                #     wind=room.ac_status,
-                # )
-                # windobj.duration += room.online_time
-                # windobj.save()
                 room.set(ac_status='off', online_time=0)
                 print('Log: turn off room ', room.room_id)
             else:
@@ -133,24 +127,39 @@ class SetMode(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({'Error': 'This room is not checked in or not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-# front apis
-class CheckOut(APIView):
 
+# front apis
+class Detail(APIView):
     def post(self, request: Request, format=None):
         room_id = request.data.get('room_id')
         room = roomList.get_room(room_id)
-        if room.is_checked():
+        if room != None and room.is_checked():
             details = room.get_details()
             serializer = DetailSerializer(details, many=True)
-            room.check_out()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'This room is not checked in.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-# manager apis
-class Report(APIView):
+class CheckOut(APIView):
+    def post(self, request: Request, format=None):
+        room_id = request.data.get('room_id')
+        room = roomList.get_room(room_id)
+        if room.is_checked():
+            bill = {
+                'room_id': room_id,
+                'total_money': room.total_money,
+                'checkin_time': room.checkin_time,
+                'checkout_time': datetime.now()
+            }
+            room.check_out()
+            return Response(data=bill, status=status.HTTP_200_OK)
+        else:
+            return Response({'Error': 'This room is not checked in.'}, status=status.HTTP_404_NOT_FOUND)
 
+
+# manager apis
+class DailyReport(APIView):
     def post(self, request: Request, format=None):
         d = request.data.get('date').split('-')
         request_date = date(int(d[0]), int(d[1]), int(d[2]))
@@ -170,5 +179,26 @@ class Report(APIView):
             r['most_use_wind'] = str(
                 wind[wind['room_id'] == r['room_id']]['wind'].values[0]
             )
-        serializer = ReportSerializer(report_list, many=True)
+        serializer = DailyReportSerializer(report_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class OtherReport(APIView):
+    def post(self, request: Request, format=None):
+        start_date = request.data.get('start_date').split('-')
+        end_date = request.data.get('end_date').split('-')
+        request_start_date = date(int(start_date[0]), int(start_date[1]), int(start_date[2]))
+        request_end_date = date(int(end_date[0]), int(end_date[1]), int(end_date[2]))
+        report_list = list(
+            CommonLog.objects.filter(date__range=(request_start_date, request_end_date)).values('room_id')
+            .annotate(detail_num_sum=Sum('detail_num'),
+                      total_money_sum=Sum('total_money'),
+                      reach_target_times_sum=Sum('reach_target_times'),
+                      scheduled_times_sum=Sum('scheduled_times'),
+                      ac_use_times_sum=Sum('ac_use_times'),
+                      change_temp_times_sum=Sum('change_temp_times'),
+                      change_wind_times_sum=Sum('change_wind_times'),
+                      online_time_sum=Sum('online_time')))
+
+        serializer = OtherReportSerializer(report_list, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
