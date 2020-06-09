@@ -12,17 +12,9 @@ def schedule(condition=0):
         if serviceList.length() < acSettings.max_serve_num:
             new_service_room = roomList.get_room(request['room_id'])
             old_ac_status = new_service_room.ac_status
-            # if old_ac_status != 'off':
-            #     windobj, _ = WindLog.objects.get_or_create(
-            #         room_id=new_service_room.room_id,
-            #         date=date.today(),
-            #         wind=old_ac_status,
-            #     )
-            #     windobj.duration += new_service_room.online_time
-            #     windobj.save()
             new_service_room.set(
                 ac_status=request['ac_status'],
-                temp=request['temp'],
+                # temp=request['temp'],
                 target_temp=request['target_temp']
             )
             new_service_room.add_detail()
@@ -49,17 +41,9 @@ def schedule(condition=0):
                 waitingQueue.push(new_request)
                 new_service_room = roomList.get_room(request['room_id'])
                 old_ac_status = new_service_room.ac_status
-                # if old_ac_status != 'off':
-                #     windobj, _ = WindLog.objects.get_or_create(
-                #         room_id=new_service_room.room_id,
-                #         date=date.today(),
-                #         wind=old_ac_status,
-                #     )
-                #     windobj.duration += new_service_room.online_time
-                #     windobj.save()
                 new_service_room.set(
                     ac_status=request['ac_status'],
-                    temp=request['temp'],
+                    # temp=request['temp'],
                     target_temp=request['target_temp']
                 )
                 new_service_room.add_detail()
@@ -84,17 +68,9 @@ def schedule(condition=0):
                 waitingQueue.push(new_request)
                 new_service_room = roomList.get_room(request['room_id'])
                 old_ac_status = new_service_room.ac_status
-                # if old_ac_status != 'off':
-                #     windobj, _ = WindLog.objects.get_or_create(
-                #         room_id=new_service_room.room_id,
-                #         date=date.today(),
-                #         wind=old_ac_status,
-                #     )
-                #     windobj.duration += new_service_room.online_time
-                #     windobj.save()
                 new_service_room.set(
                     ac_status=request['ac_status'],
-                    temp=request['temp'],
+                    # temp=request['temp'],
                     target_temp=request['target_temp']
                 )
                 new_service_room.add_detail()

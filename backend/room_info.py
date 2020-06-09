@@ -34,10 +34,24 @@ class RoomInfo:
     def set(self, **settings):
         self.mutex.acquire()
         if 'ac_status' in settings:
+            if settings['ac_status'] != self.ac_status:
+                obj, _ = CommonLog.objects.get_or_create(
+                    room_id=self.room_id,
+                    date=date.today()
+                )
+                obj.change_wind_times += 1
+                obj.save()
             self.ac_status = settings['ac_status']
         if 'temp' in settings:
             self.temp = settings['temp']
         if 'target_temp' in settings:
+            if settings['target_temp'] != self.target_temp:
+                obj, _ = CommonLog.objects.get_or_create(
+                    room_id=self.room_id,
+                    date=date.today()
+                )
+                obj.change_temp_times += 1
+                obj.save()
             self.target_temp = settings['target_temp']
         if 'money' in settings:
             self.total_money = settings['money']

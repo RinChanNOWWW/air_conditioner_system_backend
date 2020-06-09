@@ -36,7 +36,8 @@ front_apis = [
 ]
 
 manager_apis = [
-    path('report/', views.Report.as_view(), name='report')
+    path('dailyreport/', views.DailyReport.as_view(), name='dailyreport'),
+    path('otherreport/', views.OtherReport.as_view(), name='otherreport')
 ]
 
 apis = [
