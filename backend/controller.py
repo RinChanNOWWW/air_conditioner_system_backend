@@ -9,6 +9,7 @@ from .room_list import roomList
 # 轮询周期
 interval = 5
 
+
 def poll():
     print('Log: service list:', str(serviceList))
     print('Log: waiting queue:', waitingQueue.waiting_queue)
@@ -48,6 +49,7 @@ def update_target_temp_log(room):
     obj.duration += interval
     obj.save()
 
+
 def update_wind_log(room):
     obj, _ = WindLog.objects.get_or_create(
         room_id=room.room_id,
@@ -56,4 +58,3 @@ def update_wind_log(room):
     )
     obj.duration += interval
     obj.save()
-
