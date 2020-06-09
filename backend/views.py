@@ -11,7 +11,7 @@ from .serializers import *
 from .scheduler import schedule
 from .pause_list import pauseList
 from .models import CommonLog, WindLog, TargetTempLog
-from datetime import date
+from datetime import date, datetime
 import pandas as pd
 
 
@@ -133,9 +133,9 @@ class SetMode(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({'Error': 'This room is not checked in or not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-# front apis
-class CheckOut(APIView):
 
+# front apis
+class Detail(APIView):
     def post(self, request: Request, format=None):
         room_id = request.data.get('room_id')
         room = roomList.get_room(room_id)
@@ -144,6 +144,23 @@ class CheckOut(APIView):
             serializer = DetailSerializer(details, many=True)
             room.check_out()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'Error': 'This room is not checked in.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class CheckOut(APIView):
+    def post(self, request: Request, format=None):
+        room_id = request.data.get('room_id')
+        room = roomList.get_room(room_id)
+        if room.is_checked():
+            bill = {
+                'room_id': room_id,
+                'total_money': room.total_money,
+                'checkin_time': room.checkin_time,
+                'checkout_time': datetime.now()
+            }
+            room.check_out()
+            return Response(data=bill, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'This room is not checked in.'}, status=status.HTTP_404_NOT_FOUND)
 

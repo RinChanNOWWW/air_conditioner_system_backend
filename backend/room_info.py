@@ -6,7 +6,7 @@ from .service_list import serviceList
 from .pause_list import pauseList
 from .models import CommonLog
 from .controller import interval
-from datetime import date
+from datetime import date, datetime
 
 
 class RoomInfo:
@@ -26,6 +26,7 @@ class RoomInfo:
         self.online_time = online_time
         self.checked = False
         self.total_money = money
+        self.checkin_time = None
 
     def same_mode(self, mode):
         return self.ac_status == mode
@@ -49,6 +50,7 @@ class RoomInfo:
     def check_in(self):
         self.mutex.acquire()
         self.checked = True
+        self.checkin_time = datetime.now()
         self.mutex.release()
 
     def check_out(self):
@@ -68,6 +70,7 @@ class RoomInfo:
         self.checked = False
         self.details = []
         self.total_money = 0
+        self.checkin_time = None
         self.mutex.release()
 
     def is_checked(self):

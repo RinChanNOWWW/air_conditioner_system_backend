@@ -31,6 +31,7 @@ user_apis = [
 ]
 
 front_apis = [
+    path('detail/', views.Detail.as_view(), name='detail'),
     path('checkout/', views.CheckOut.as_view(), name='checkout')
 ]
 
