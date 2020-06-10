@@ -11,6 +11,7 @@ class RoomInfoSerializer(serializers.Serializer):
     checked = serializers.BooleanField()
     total_money = serializers.IntegerField()
     checkin_time = serializers.DateTimeField()
+    price = serializers.IntegerField()
 
 
 

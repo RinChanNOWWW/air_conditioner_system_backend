@@ -27,6 +27,7 @@ class RoomInfo:
         self.checked = False
         self.total_money = money
         self.checkin_time = None
+        self.price = 0
 
     def same_mode(self, mode):
         return self.ac_status == mode
@@ -42,6 +43,7 @@ class RoomInfo:
                 obj.change_wind_times += 1
                 obj.save()
             self.ac_status = settings['ac_status']
+            self.price = acSettings.power_price * acSettings.wind_power[self.ac_status]
         if 'temp' in settings:
             self.temp = settings['temp']
         if 'target_temp' in settings:
@@ -85,6 +87,7 @@ class RoomInfo:
         self.details = []
         self.total_money = 0
         self.checkin_time = None
+        self.price = 0
         self.mutex.release()
 
     def is_checked(self):
