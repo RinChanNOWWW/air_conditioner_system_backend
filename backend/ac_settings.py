@@ -28,7 +28,7 @@ class ACSettings:
             self.room_num = num
 
     def set_temp_period(self, period):
-        if period is not None:
+        if period['min'] is not None and period['max'] is not None:
             self.temp_period['min'] = period['min']
             self.temp_period['max'] = period['max']
 

@@ -59,7 +59,10 @@ class CheckIn(APIView):
             if not room.is_checked():
                 room.check_in()
                 serializer = RoomInfoSerializer(room)
-                return Response(data=serializer.data, status=status.HTTP_200_OK)
+                data = serializer.data
+                data['temp_min'] = acSettings.temp_period['min']
+                data['temp_max'] = acSettings.temp_period['max']
+                return Response(data=data, status=status.HTTP_200_OK)
         return Response(data={'Error': 'No empty room.'}, status=status.HTTP_404_NOT_FOUND)
 
 
