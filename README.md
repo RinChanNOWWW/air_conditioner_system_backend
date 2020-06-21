@@ -16,12 +16,18 @@ pip3 install Django
 pip3 install djangorestframework
 ```
 
+- 安装 django-cors-headers
+
+```bash
+pip3 install django-cors-headers
+```
+
 官网：https://www.django-rest-framework.org
 
 - 将源代码克隆到本地：
 
 ```bash
-git clone KagamineRinSuki/air_conditioner_system_backend
+git clone git@39.106.86.23:/home/git/air_conditioner_system_backend
 ```
 
 ## 初始化数据库
