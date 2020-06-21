@@ -77,7 +77,7 @@ class HeartBeat(APIView):
             return Response({'Error': 'Data can not be serialized.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         room = roomList.get_room(content['room_id'])
         room.set(temp=content['temp'])
-        if room.temp == room.target_temp:
+        if room.temp == room.target_temp and room.ac_status != 'off':
             obj, _ = CommonLog.objects.get_or_create(room_id=room.room_id, date=date.today())
             obj.reach_target_times += 1
             obj.save()

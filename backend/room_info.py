@@ -45,7 +45,7 @@ class RoomInfo:
             self.ac_status = settings['ac_status']
             self.price = acSettings.power_price * acSettings.wind_power[self.ac_status]
         if 'temp' in settings:
-            self.temp = settings['temp']
+            self.temp = float(settings['temp'])
         if 'target_temp' in settings:
             if settings['target_temp'] != self.target_temp:
                 obj, _ = CommonLog.objects.get_or_create(
@@ -54,7 +54,7 @@ class RoomInfo:
                 )
                 obj.change_temp_times += 1
                 obj.save()
-            self.target_temp = settings['target_temp']
+            self.target_temp = float(settings['target_temp'])
         if 'money' in settings:
             self.total_money = settings['money']
         if 'elec' in settings:
