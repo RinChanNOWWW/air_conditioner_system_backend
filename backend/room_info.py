@@ -17,7 +17,7 @@ class RoomInfo:
         return self.room_id
 
     def __init__(self, room_id, online_time=0, ac_status='off', temp=acSettings.default_temp,
-                 target_temp=acSettings.default_temp, elec=0, money=0):
+                 target_temp=acSettings.default_temp - 1, elec=0, money=0):
         self.room_id = room_id
         self.ac_status = ac_status
         self.temp = temp

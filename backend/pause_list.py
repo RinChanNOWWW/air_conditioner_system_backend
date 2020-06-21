@@ -5,6 +5,13 @@ class PauseList:
     pause_list = []
     mutex = threading.Lock()
 
+    def __str__(self):
+        s = '['
+        for item in self.pause_list:
+            s += '(' + str(item[0].room_id) + ',' + str(item[1]) + ')'
+        s += ']'
+        return s
+
     def append(self, room, mode):
         self.mutex.acquire()
         self.pause_list.append((room, mode))

@@ -104,11 +104,8 @@ class SetMode(APIView):
         else:
             return Response({'Error': 'Data can not be serialized.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         room = roomList.get_room(content['room_id'])
-        room.set(target_temp=content['target_temp'])
-        if room.same_mode(content['ac_status']):
-            serializer = RoomInfoSerializer(room)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         if room is not None and room.is_checked():
+
             if serviceList.look_up(room.room_id):
                 serviceList.remove(room.room_id)
                 print('Log: remove room ', room.room_id, ' from service list.')
@@ -117,7 +114,14 @@ class SetMode(APIView):
                 print('Log: remove room', room.room_id, ' from waiting list.')
             if pauseList.look_up(room.room_id):
                 pauseList.remove(room.room_id)
-            if content['ac_status'] == 'off':
+                print('Log: remove room', room.room_id, ' from pause list.')
+
+            room.set(target_temp=content['target_temp'])
+            if room.same_mode(content['ac_status']):
+                print('set target temp success')
+                # serializer = RoomInfoSerializer(room)
+                # return Response(serializer.data, status=status.HTTP_200_OK)
+            elif content['ac_status'] == 'off':
                 room.add_detail()
                 room.set(ac_status='off', online_time=0)
                 print('Log: turn off room ', room.room_id)

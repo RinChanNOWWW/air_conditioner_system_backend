@@ -58,7 +58,8 @@ background_scheduler = BackgroundScheduler()
 background_scheduler.add_job(
     controller.poll,
     'interval',
-    seconds=controller.interval
+    seconds=controller.interval,
+    max_instances=100
 )
 background_scheduler.start()
 

@@ -13,6 +13,7 @@ interval = 5
 def poll():
     print('Log: service list:', str(serviceList))
     print('Log: waiting queue:', waitingQueue.waiting_queue)
+    print('Log: pause list:', str(pauseList))
 
     for room in roomList.room_list:
         if serviceList.look_up(room.room_id) or waitingQueue.look_up(room.room_id) or pauseList.look_up(room.room_id):
@@ -29,13 +30,14 @@ def poll():
 
     for item in pauseList.pause_list:
         room = item[0]
-        if abs(room.target_temp - room.temp) > 1:
+        if abs(room.target_temp - room.temp) >= 1:
             new_request = {
                 'room_id': room.room_id,
                 'ac_status': item[1],
                 'temp': room.temp,
                 'target_temp': room.target_temp
             }
+            pauseList.remove(room.room_id)
             waitingQueue.push(new_request)
 
     schedule()
