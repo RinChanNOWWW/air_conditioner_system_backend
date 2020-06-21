@@ -7,7 +7,7 @@ class RoomInfoSerializer(serializers.Serializer):
     temp = serializers.DecimalField(max_digits=3, decimal_places=1)
     target_temp = serializers.DecimalField(max_digits=3, decimal_places=1)
     elec = serializers.IntegerField()
-    online_time = serializers.IntegerField
+    online_time = serializers.IntegerField()
     checked = serializers.BooleanField()
     total_money = serializers.IntegerField()
     checkin_time = serializers.DateTimeField()
