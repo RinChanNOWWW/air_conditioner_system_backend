@@ -30,7 +30,10 @@ def poll():
 
     for item in pauseList.pause_list:
         room = item[0]
-        if abs(room.target_temp - room.temp) >= 1:
+        # print(room.target_temp, room.temp)
+        # print(room.target_temp - room.temp)
+        if abs(room.temp - room.target_temp) >= 0.5:
+            print('remove from pause list')
             new_request = {
                 'room_id': room.room_id,
                 'ac_status': item[1],
@@ -38,7 +41,9 @@ def poll():
                 'target_temp': room.target_temp
             }
             pauseList.remove(room.room_id)
+            print('remove from pause list')
             waitingQueue.push(new_request)
+            print('add to waiting queue')
 
     schedule()
 

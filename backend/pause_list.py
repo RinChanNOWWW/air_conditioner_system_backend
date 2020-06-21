@@ -27,7 +27,7 @@ class PauseList:
         self.mutex.acquire()
         for item in self.pause_list:
             if room_id == item[0].room_id:
-                self.remove(item)
+                self.pause_list.remove(item)
                 self.mutex.release()
                 return
         self.mutex.release()
