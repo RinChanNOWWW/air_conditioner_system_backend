@@ -1,4 +1,6 @@
 .DS_Store
 /venv
 uwsgi.*
-/__pycache__
+backend/__pycache__
+new_air_conditioner_system/__pycache__
+*.pyc
