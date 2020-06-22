@@ -78,7 +78,7 @@ class RoomInfo:
         if pauseList.look_up(self.room_id):
             pauseList.remove(self.room_id)
         self.checked = False
-        self.ac_status = 'Off'
+        self.ac_status = 'off'
         self.temp = acSettings.default_temp
         self.target_temp = acSettings.default_temp
         self.elec = 0
