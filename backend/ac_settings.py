@@ -15,11 +15,11 @@ class ACSettings:
     }
     power_price = 1
     max_serve_num = 3
-    default_temp = 26.0
+    default_temp = 25.0
     mode = 'cold'
     temp_period = {
         'min': 18,
-        'max': 26
+        'max': 25
     }
     room_num = 50
 

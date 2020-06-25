@@ -20,7 +20,6 @@ class RoomInfo:
                  target_temp=acSettings.default_temp, elec=0, money=0):
         self.room_id = room_id
         self.ac_status = ac_status
-        self.temp = temp
         self.target_temp = target_temp
         self.elec = elec
         self.online_time = online_time
@@ -28,6 +27,19 @@ class RoomInfo:
         self.total_money = money
         self.checkin_time = None
         self.price = 0
+        if self.room_id == 1:
+            self.temp = 32.0
+        elif self.room_id == 2:
+            self.temp = 28.0
+        elif self.room_id == 3:
+            self.temp = 30.0
+        elif self.room_id == 4:
+            self.temp = 29.0
+        elif self.room_id == 5:
+            self.temp = 35.0
+        else:
+            self.temp = temp
+
 
     def same_mode(self, mode):
         return self.ac_status == mode
