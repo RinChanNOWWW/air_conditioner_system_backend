@@ -91,7 +91,7 @@ class RoomInfo:
             pauseList.remove(self.room_id)
         self.checked = False
         self.ac_status = 'off'
-        self.temp = acSettings.default_temp
+        # self.temp = acSettings.default_temp
         self.target_temp = acSettings.default_temp
         self.elec = 0
         self.online_time = 0
@@ -100,6 +100,18 @@ class RoomInfo:
         self.total_money = 0
         self.checkin_time = None
         self.price = 0
+        if self.room_id == 1:
+            self.temp = 32.0
+        elif self.room_id == 2:
+            self.temp = 28.0
+        elif self.room_id == 3:
+            self.temp = 30.0
+        elif self.room_id == 4:
+            self.temp = 29.0
+        elif self.room_id == 5:
+            self.temp = 35.0
+        else:
+            self.temp = acSettings.default_temp
         self.mutex.release()
 
     def is_checked(self):
