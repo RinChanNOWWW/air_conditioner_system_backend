@@ -4,6 +4,7 @@ from .room_list import roomList
 from .ac_settings import priority, acSettings
 from .models import CommonLog, TargetTempLog, WindLog
 from datetime import date
+import backend.controller
 
 
 def schedule(condition=0):
@@ -57,7 +58,8 @@ def schedule(condition=0):
                     obj.ac_use_times += 1
                 obj.save()
                 waitingQueue.pop()
-            elif priority[request['ac_status']] >= priority[lowest_room.ac_status]:
+            elif priority[request['ac_status']] > priority[lowest_room.ac_status] or \
+                (priority[request['ac_status']] == priority[lowest_room.ac_status] and lowest_room.online_time >= 2 * backend.controller.interval):
                 serviceList.remove(lowest_room.room_id)
                 new_request = {
                     'room_id': lowest_room.room_id,

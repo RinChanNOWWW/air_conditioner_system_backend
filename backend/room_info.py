@@ -144,17 +144,20 @@ class RoomInfo:
         #     self.elec = last_detail.elec + self.online_time * acSettings.wind_power[self.ac_status]
         # else:
         #     self.elec = self.online_time * acSettings.wind_power[self.ac_status]
-        self.elec += interval * acSettings.wind_power[self.ac_status]
+        # self.elec += interval * acSettings.wind_power[self.ac_status]
+        self.elec += acSettings.wind_power[self.ac_status]
+        self.elec = round(self.elec, 1)
+        print(self.elec)
         obj, _ = CommonLog.objects.get_or_create(
             room_id=self.room_id,
             date=date.today()
         )
         # obj.scheduled_times += self.online_time * acSettings.wind_power[self.ac_status]
-        obj.total_money += interval * acSettings.wind_power[self.ac_status] * acSettings.power_price
+        obj.total_money += round(acSettings.wind_power[self.ac_status] * acSettings.power_price, 1)
         obj.save()
 
     def update_money(self):
-        self.total_money = self.elec * acSettings.power_price
+        self.total_money = round(self.elec * acSettings.power_price, 1)
 
 
 class Detail:
@@ -164,5 +167,5 @@ class Detail:
         self.temp = temp
         self.target_temp = target_temp
         self.elec = elec
-        self.total_money = elec * acSettings.power_price
+        self.total_money = round(elec * acSettings.power_price, 1)
         self.timestamp = datetime.now()

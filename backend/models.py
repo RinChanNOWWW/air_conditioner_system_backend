@@ -6,7 +6,7 @@ class CommonLog(models.Model):
     room_id = models.IntegerField()
     date = models.DateField()
     detail_num = models.IntegerField(default=0)
-    total_money = models.IntegerField(default=0)
+    total_money = models.FloatField(default=0)
     reach_target_times = models.IntegerField(default=0)
     scheduled_times = models.IntegerField(default=0)
     ac_use_times = models.IntegerField(default=0)
@@ -21,7 +21,7 @@ class CommonLog(models.Model):
 class TargetTempLog(models.Model):
     room_id = models.IntegerField()
     date = models.DateField()
-    target_temp = models.DecimalField(max_digits=3, decimal_places=1)
+    target_temp = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     duration = models.IntegerField(default=0)
 
     class Meta:

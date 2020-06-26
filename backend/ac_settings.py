@@ -9,9 +9,9 @@ priority = {
 class ACSettings:
     wind_power = {
         'off': 0,
-        'low': 1,
-        'medium': 2,
-        'high': 3
+        'low': 0.3,
+        'medium': 0.5,
+        'high': 1
     }
     power_price = 1
     max_serve_num = 3
