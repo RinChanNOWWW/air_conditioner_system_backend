@@ -75,21 +75,22 @@ class HeartBeat(APIView):
             content = req.validated_data
         else:
             return Response({'Error': 'Data can not be serialized.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        room = roomList.get_room(content['room_id'])
-        room.set(temp=content['temp'])
-        if room.temp == room.target_temp and room.ac_status != 'off':
-            obj, _ = CommonLog.objects.get_or_create(room_id=room.room_id, date=date.today())
-            obj.reach_target_times += 1
-            obj.save()
-            if serviceList.look_up(room.room_id):
-                serviceList.remove(room.room_id)
-            if waitingQueue.look_up(room.room_id):
-                waitingQueue.remove(room.room_id)
-            old_ac_status = room.ac_status
-            room.set(ac_status='off', online_time=0)
-            room.add_detail()
-            pauseList.append(room, old_ac_status)
 
+        room = roomList.get_room(content['room_id'])
+        if room.is_checked():
+            room.set(temp=content['temp'])
+            if room.temp == room.target_temp and room.ac_status != 'off':
+                obj, _ = CommonLog.objects.get_or_create(room_id=room.room_id, date=date.today())
+                obj.reach_target_times += 1
+                obj.save()
+                if serviceList.look_up(room.room_id):
+                    serviceList.remove(room.room_id)
+                if waitingQueue.look_up(room.room_id):
+                    waitingQueue.remove(room.room_id)
+                old_ac_status = room.ac_status
+                room.set(ac_status='off', online_time=0)
+                room.add_detail()
+                pauseList.append(room, old_ac_status)
         response = RoomInfoSerializer(room)
         return Response(response.data, status=status.HTTP_200_OK)
 
