@@ -11,12 +11,16 @@ class WaitingQueue:
         self.mutex.acquire()
         # if self.look_up(request['room_id']):
         #     self.remove(request['room_id'])
-        self.waiting_queue.append((request, datetime.now()))
-        self.waiting_queue = sorted(self.waiting_queue, key=lambda x: (-priority[x[0]['ac_status']], x[1]))
+        # self.waiting_queue.append((request, datetime.now()))
+        self.waiting_queue.append([request, 0])
+        self.waiting_queue = sorted(self.waiting_queue, key=lambda x: (-priority[x[0]['ac_status']], -x[1]))
         self.mutex.release()
 
     def front(self):
         return self.waiting_queue[0][0]
+
+    def get_front_waited_time(self):
+        return self.waiting_queue[0][1]
 
     def pop(self):
         self.mutex.acquire()

@@ -10,6 +10,7 @@ import backend.controller
 def schedule(condition=0):
     if waitingQueue.length() > 0:
         request = waitingQueue.front()
+        waited_time = waitingQueue.get_front_waited_time()
         if serviceList.length() < acSettings.max_serve_num:
             new_service_room = roomList.get_room(request['room_id'])
             old_ac_status = new_service_room.ac_status
@@ -59,7 +60,9 @@ def schedule(condition=0):
                 obj.save()
                 waitingQueue.pop()
             elif priority[request['ac_status']] > priority[lowest_room.ac_status] or \
-                (priority[request['ac_status']] == priority[lowest_room.ac_status] and lowest_room.online_time >= 2 * backend.controller.interval):
+                (priority[request['ac_status']] == priority[lowest_room.ac_status] and
+                 waited_time >= 2 * backend.controller.interval and
+                 lowest_room.online_time >= 2 * backend.controller.interval):
                 new_request = {
                     'room_id': lowest_room.room_id,
                     'ac_status': lowest_room.ac_status,

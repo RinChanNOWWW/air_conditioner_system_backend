@@ -10,7 +10,7 @@ class ServiceList:
     def __str__(self):
         s = '['
         for room in self.service_list:
-            s += '(' + str(room.room_id) + ',' + str(room.ac_status) + ',' + str(room.online_time) + ')' + ' '
+            s += '(' + str(room.room_id) + ',' + str(room.ac_status) + ',' + str(room.total_money) + ')' + ' '
         s += ']'
         return s
 
