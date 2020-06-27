@@ -143,7 +143,7 @@ class Detail(APIView):
     def post(self, request: Request, format=None):
         room_id = request.data.get('room_id')
         room = roomList.get_room(room_id)
-        if room != None and room.is_checked():
+        if room is not None and room.is_checked():
             details = room.get_details()
             serializer = DetailSerializer(details, many=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -155,14 +155,16 @@ class CheckOut(APIView):
     def post(self, request: Request, format=None):
         room_id = request.data.get('room_id')
         room = roomList.get_room(room_id)
-        if room.is_checked():
+        if room is not None and room.is_checked():
             bill = {
                 'room_id': room_id,
                 'total_money': room.total_money,
                 'checkin_time': room.checkin_time,
-                'checkout_time': datetime.now()
+                'checkout_time': datetime.now(),
             }
+            print('ready to check out')
             room.check_out()
+            print('checked out')
             return Response(data=bill, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'This room is not checked in.'}, status=status.HTTP_404_NOT_FOUND)

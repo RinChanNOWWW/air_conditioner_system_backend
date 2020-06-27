@@ -4,8 +4,9 @@ from .ac_settings import acSettings, priority
 
 
 class ServiceList:
-    service_list = []
-    mutex = threading.Lock()
+    def __init__(self):
+        self.service_list = []
+        self.mutex = threading.Lock()
 
     def __str__(self):
         s = '['
@@ -37,8 +38,9 @@ class ServiceList:
                 self.service_list.remove(room)
                 room.set(ac_status='off', online_time=0)
                 room.add_detail()
-                self.mutex.release()
-                return
+                # self.mutex.release()
+                # return
+        print(1.4)
         self.mutex.release()
 
     def length(self):

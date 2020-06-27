@@ -9,6 +9,17 @@ from .controller import interval
 from datetime import date, datetime
 
 
+class Detail:
+    def __init__(self, room_id, ac_status, temp, target_temp, elec):
+        self.room_id = room_id
+        self.ac_status = ac_status
+        self.temp = temp
+        self.target_temp = target_temp
+        self.elec = elec
+        self.total_money = round(elec * acSettings.power_price, 1)
+        self.timestamp = datetime.now()
+
+
 class RoomInfo:
     def __str__(self):
         return self.room_id
@@ -44,6 +55,8 @@ class RoomInfo:
 
     def set(self, **settings):
         self.mutex.acquire()
+        if 'checked' in settings:
+            self.checked = settings['checked']
         if 'ac_status' in settings:
             if settings['ac_status'] != self.ac_status and settings['ac_status'] != 'off':
                 obj, _ = CommonLog.objects.get_or_create(
@@ -71,6 +84,10 @@ class RoomInfo:
             self.temp = settings['elec']
         if 'online_time' in settings:
             self.online_time = settings['online_time']
+        if 'checkin_time' in settings:
+            self.checkin_time = settings['checkin_time']
+        if 'price' in settings:
+            self.price = settings['price']
         self.mutex.release()
 
     def check_in(self):
@@ -80,37 +97,36 @@ class RoomInfo:
         self.mutex.release()
 
     def check_out(self):
-        self.mutex.acquire()
         if serviceList.look_up(self.room_id):
             serviceList.remove(self.room_id)
         if waitingQueue.look_up(self.room_id):
             waitingQueue.remove(self.room_id)
         if pauseList.look_up(self.room_id):
             pauseList.remove(self.room_id)
-        self.checked = False
-        self.ac_status = 'off'
-        # self.temp = acSettings.default_temp
-        self.target_temp = acSettings.default_temp
-        self.elec = 0
-        self.online_time = 0
-        self.checked = False
-        self.details = []
-        self.total_money = 0
-        self.checkin_time = None
-        self.price = 0
+        target = 0
         if self.room_id == 1:
-            self.temp = 32.0
+            target = 32.0
         elif self.room_id == 2:
-            self.temp = 28.0
+            target = 28.0
         elif self.room_id == 3:
-            self.temp = 30.0
+            target = 30.0
         elif self.room_id == 4:
-            self.temp = 29.0
+            target = 29.0
         elif self.room_id == 5:
-            self.temp = 35.0
+            target = 35.0
         else:
-            self.temp = acSettings.default_temp
-        self.mutex.release()
+            target = acSettings.default_temp
+        self.set(
+            checked=False,
+            ac_status='off',
+            target_temp=target,
+            elec=0,
+            online_time=0,
+            money=0,
+            checkin_time=None,
+            price=0,
+        )
+
 
     def is_checked(self):
         return self.checked
@@ -125,13 +141,13 @@ class RoomInfo:
             elec=self.elec
         )
         self.details.append(detail)
-        self.mutex.release()
         obj, _ = CommonLog.objects.get_or_create(
             room_id=self.room_id,
             date=date.today()
         )
         obj.detail_num += 1
         obj.save()
+        self.mutex.release()
 
     def get_details(self):
         return self.details
@@ -156,14 +172,3 @@ class RoomInfo:
 
     def update_money(self):
         self.total_money = round(self.elec * acSettings.power_price, 1)
-
-
-class Detail:
-    def __init__(self, room_id, ac_status, temp, target_temp, elec):
-        self.room_id = room_id
-        self.ac_status = ac_status
-        self.temp = temp
-        self.target_temp = target_temp
-        self.elec = elec
-        self.total_money = round(elec * acSettings.power_price, 1)
-        self.timestamp = datetime.now()
