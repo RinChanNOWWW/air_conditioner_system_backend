@@ -40,6 +40,7 @@ def schedule(condition=0):
                     'target_temp': lowest_room.target_temp
                 }
                 serviceList.remove(lowest_room.room_id)
+                lowest_room.add_detail()
                 waitingQueue.push(new_request)
                 new_service_room = roomList.get_room(request['room_id'])
                 old_ac_status = new_service_room.ac_status
@@ -70,6 +71,7 @@ def schedule(condition=0):
                     'target_temp': lowest_room.target_temp
                 }
                 serviceList.remove(lowest_room.room_id)
+                lowest_room.add_detail()
                 waitingQueue.push(new_request)
                 new_service_room = roomList.get_room(request['room_id'])
                 old_ac_status = new_service_room.ac_status
