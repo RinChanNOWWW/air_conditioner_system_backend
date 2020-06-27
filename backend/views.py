@@ -176,6 +176,10 @@ class DailyReport(APIView):
         d = request.data.get('date').split('-')
         request_date = date(int(d[0]), int(d[1]), int(d[2]))
         report_list = list(CommonLog.objects.filter(date=request_date).values())
+        print(report_list)
+        if len(report_list) == 0:
+            serializer = DailyReportSerializer(report_list, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         target_df = pd.DataFrame(list(TargetTempLog.objects.filter(date=request_date).values()))
         target_group = target_df.groupby('room_id')
         target_group = target_group['duration'].max()
