@@ -32,7 +32,7 @@ def poll():
         room = item[0]
         # print(room.target_temp, room.temp)
         # print(room.target_temp - room.temp)
-        if abs(room.temp - room.target_temp) >= 0.5:
+        if abs(room.temp - room.target_temp) >= 1:
             print('remove from pause list')
             new_request = {
                 'room_id': room.room_id,

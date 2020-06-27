@@ -10,18 +10,17 @@ from datetime import date, datetime
 
 
 class RoomInfo:
-    details = []
-    mutex = threading.Lock()
-
     def __str__(self):
         return self.room_id
 
     def __init__(self, room_id, online_time=0, ac_status='off', temp=acSettings.default_temp,
                  target_temp=acSettings.default_temp, elec=0, money=0):
+        self.mutex = threading.Lock()
         self.room_id = room_id
         self.ac_status = ac_status
         self.target_temp = target_temp
         self.elec = elec
+        self.details = []
         self.online_time = online_time
         self.checked = False
         self.total_money = money
@@ -40,14 +39,13 @@ class RoomInfo:
         else:
             self.temp = temp
 
-
     def same_mode(self, mode):
         return self.ac_status == mode
 
     def set(self, **settings):
         self.mutex.acquire()
         if 'ac_status' in settings:
-            if settings['ac_status'] != self.ac_status:
+            if settings['ac_status'] != self.ac_status and settings['ac_status'] != 'off':
                 obj, _ = CommonLog.objects.get_or_create(
                     room_id=self.room_id,
                     date=date.today()
@@ -147,7 +145,7 @@ class RoomInfo:
         # self.elec += interval * acSettings.wind_power[self.ac_status]
         self.elec += acSettings.wind_power[self.ac_status]
         self.elec = round(self.elec, 1)
-        print(self.elec)
+        # print(self.elec)
         obj, _ = CommonLog.objects.get_or_create(
             room_id=self.room_id,
             date=date.today()

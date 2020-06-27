@@ -35,6 +35,8 @@ class ServiceList:
         for room in self.service_list:
             if room.room_id == room_id:
                 self.service_list.remove(room)
+                room.set(ac_status='off', online_time=0)
+                room.add_detail()
                 self.mutex.release()
                 return
         self.mutex.release()

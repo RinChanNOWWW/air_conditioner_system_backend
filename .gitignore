@@ -4,3 +4,4 @@ uwsgi.*
 backend/__pycache__
 new_air_conditioner_system/__pycache__
 *.pyc
+db.sqlite3

@@ -32,13 +32,13 @@ def schedule(condition=0):
         else:
             lowest_room = serviceList.get_lowest_room()
             if condition == 1 and priority[request['ac_status']] > priority[lowest_room.ac_status]:
-                serviceList.remove(lowest_room.room_id)
                 new_request = {
                     'room_id': lowest_room.room_id,
                     'ac_status': lowest_room.ac_status,
                     'temp': lowest_room.temp,
                     'target_temp': lowest_room.target_temp
                 }
+                serviceList.remove(lowest_room.room_id)
                 waitingQueue.push(new_request)
                 new_service_room = roomList.get_room(request['room_id'])
                 old_ac_status = new_service_room.ac_status
@@ -60,13 +60,13 @@ def schedule(condition=0):
                 waitingQueue.pop()
             elif priority[request['ac_status']] > priority[lowest_room.ac_status] or \
                 (priority[request['ac_status']] == priority[lowest_room.ac_status] and lowest_room.online_time >= 2 * backend.controller.interval):
-                serviceList.remove(lowest_room.room_id)
                 new_request = {
                     'room_id': lowest_room.room_id,
                     'ac_status': lowest_room.ac_status,
                     'temp': lowest_room.temp,
                     'target_temp': lowest_room.target_temp
                 }
+                serviceList.remove(lowest_room.room_id)
                 waitingQueue.push(new_request)
                 new_service_room = roomList.get_room(request['room_id'])
                 old_ac_status = new_service_room.ac_status

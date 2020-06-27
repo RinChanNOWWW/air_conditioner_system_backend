@@ -123,8 +123,8 @@ class SetMode(APIView):
                 # serializer = RoomInfoSerializer(room)
                 # return Response(serializer.data, status=status.HTTP_200_OK)
             elif content['ac_status'] == 'off':
-                room.add_detail()
                 room.set(ac_status='off', online_time=0)
+                room.add_detail()
                 print('Log: turn off room ', room.room_id)
             else:
                 waitingQueue.push(content)
