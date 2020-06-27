@@ -81,7 +81,7 @@ class RoomInfo:
         if 'money' in settings:
             self.total_money = settings['money']
         if 'elec' in settings:
-            self.temp = settings['elec']
+            self.elec = settings['elec']
         if 'online_time' in settings:
             self.online_time = settings['online_time']
         if 'checkin_time' in settings:
