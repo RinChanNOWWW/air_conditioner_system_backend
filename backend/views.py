@@ -36,6 +36,8 @@ class SetUp(APIView):
         acSettings.set_max_serve_num(content.get('max_serve_num'))
         acSettings.set_power_price(content.get('price'))
         acSettings.set_wind_power(content.get('low'), content.get('medium'), content.get('high'))
+        while roomList.length() != 0:
+            roomList.remove_room()
         # 进行房间初始化
         for i in range(1, acSettings.room_num + 1):
             room = RoomInfo(room_id=i)
