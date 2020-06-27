@@ -56,6 +56,8 @@ class RoomInfo:
     def set(self, **settings):
         self.mutex.acquire()
         if 'checked' in settings:
+            if settings['checked'] == False:
+                self.details.clear()
             self.checked = settings['checked']
         if 'ac_status' in settings:
             if settings['ac_status'] != self.ac_status and settings['ac_status'] != 'off':
@@ -103,28 +105,29 @@ class RoomInfo:
             waitingQueue.remove(self.room_id)
         if pauseList.look_up(self.room_id):
             pauseList.remove(self.room_id)
-        target = 0
+        temp = 0
         if self.room_id == 1:
-            target = 32.0
+            temp = 32.0
         elif self.room_id == 2:
-            target = 28.0
+            temp = 28.0
         elif self.room_id == 3:
-            target = 30.0
+            temp = 30.0
         elif self.room_id == 4:
-            target = 29.0
+            temp = 29.0
         elif self.room_id == 5:
-            target = 35.0
+            temp = 35.0
         else:
-            target = acSettings.default_temp
+            temp = acSettings.default_temp
         self.set(
             checked=False,
             ac_status='off',
-            target_temp=target,
+            target_temp=acSettings.default_temp,
             elec=0,
             online_time=0,
             money=0,
             checkin_time=None,
             price=0,
+            temp=temp
         )
 
 

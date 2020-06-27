@@ -179,7 +179,9 @@ class DailyReport(APIView):
         d = request.data.get('date').split('-')
         request_date = date(int(d[0]), int(d[1]), int(d[2]))
         report_list = list(CommonLog.objects.filter(date=request_date).values())
-        print(report_list)
+        for report in report_list[::-1]:
+            if report['scheduled_times'] == 0:
+                report_list.remove(report)
         if len(report_list) == 0:
             serializer = DailyReportSerializer(report_list, many=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
