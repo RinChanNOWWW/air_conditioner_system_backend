@@ -40,7 +40,7 @@ class SetUp(APIView):
             roomList.remove_room()
         # 进行房间初始化
         for i in range(1, acSettings.room_num + 1):
-            room = RoomInfo(room_id=i)
+            room = RoomInfo(room_id=i, target_temp=acSettings.default_temp, temp=acSettings.default_temp)
             roomList.add_room(room)
         print('Log: init', roomList.length(), 'rooms')
         return Response(status=status.HTTP_200_OK)

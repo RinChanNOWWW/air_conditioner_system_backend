@@ -36,9 +36,9 @@ class ACSettings:
         if mode is not None:
             self.mode = mode
 
-    def set_default_temp(self,temp):
+    def set_default_temp(self, temp):
         if temp is not None:
-            self.default_temp = temp
+            self.default_temp = float(temp)
 
     def set_max_serve_num(self, num):
         if num is not None:
