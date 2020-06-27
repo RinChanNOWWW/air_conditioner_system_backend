@@ -22,6 +22,12 @@ pip3 install djangorestframework
 pip3 install django-cors-headers
 ```
 
+- 安装 APScheduler
+
+```bash
+pip3 install APSechduler
+```
+
 官网：https://www.django-rest-framework.org
 
 - 将源代码克隆到本地：
