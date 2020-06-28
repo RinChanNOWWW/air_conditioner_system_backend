@@ -65,7 +65,7 @@ class CheckIn(APIView):
                 data['temp_min'] = acSettings.temp_period['min']
                 data['temp_max'] = acSettings.temp_period['max']
                 return Response(data=data, status=status.HTTP_200_OK)
-        return Response(data={'Error': 'No empty room.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(data={'Error': 'No empty room.'}, status=status.HTTP_200_OK)
 
 
 class HeartBeat(APIView):
@@ -193,11 +193,15 @@ class DailyReport(APIView):
         wind_group = wind_df.groupby('room_id')
         wind_group = wind_group['duration'].max()
         wind = pd.merge(wind_df, wind_group, on=['room_id', 'duration'])
-        for r in report_list:
-            r['most_use_target_temp'] = int(
+        for r in report_list[::-1]:
+            if len(target[target['room_id'] == r['room_id']]['target_temp'].values) == 0 or \
+                    len(wind[wind['room_id'] == r['room_id']]['wind'].values) == 0:
+                report_list.remove(r)
+            else:
+                r['most_use_target_temp'] = int(
                 target[target['room_id'] == r['room_id']]['target_temp'].values[0]
             )
-            r['most_use_wind'] = str(
+                r['most_use_wind'] = str(
                 wind[wind['room_id'] == r['room_id']]['wind'].values[0]
             )
         serializer = DailyReportSerializer(report_list, many=True)
