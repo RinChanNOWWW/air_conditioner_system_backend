@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SshConfigs">
-    <configs>
-      <sshConfig authType="PASSWORD" host="39.106.86.23" id="96a74606-ea2c-45d5-baff-2a6989d501f0" port="22" nameFormat="DESCRIPTIVE" username="git" />
-    </configs>
-  </component>
-</project>
